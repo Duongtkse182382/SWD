@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 
 export default function ForgotPassword() {
@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     setLoading(true);
   
     try {
-      const response = await fetch(`/api/auth/forgot-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -48,7 +48,7 @@ export default function ForgotPassword() {
       {/* Forgot Password Section */}
       <div className="flex flex-grow items-center justify-center relative z-10 px-4">
         <div className="w-full max-w-md bg-white bg-opacity-90 backdrop-blur-lg shadow-lg rounded-2xl p-8">
-          <h2 className="text-center text-2xl font-bold text-[#A7DFEC] uppercase mb-6">
+          <h2 className="text-center text-2xl font-bold text-[#c86c79] uppercase mb-6">
             Forgot Password
           </h2>
 
@@ -65,7 +65,7 @@ export default function ForgotPassword() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2B6A7C]"
+                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#c86c79]"
                 required
               />
             </div>
@@ -74,7 +74,7 @@ export default function ForgotPassword() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="w-full h-12 bg-[#A7DFEC] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#2B6A7C] transition duration-300 disabled:opacity-50"
+                className="w-full h-12 bg-[#c86c79] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#b25668] transition duration-300 disabled:opacity-50"
                 disabled={loading}
               >
                 {loading ? "Sending..." : "Reset Password"}
@@ -85,7 +85,7 @@ export default function ForgotPassword() {
           {/* Login Link */}
           <div className="text-center mt-4 text-gray-700">
             <span>Remember your password? </span>
-            <a href="/login" className="font-semibold text-[#A7DFEC] hover:underline">
+            <a href="/login" className="font-semibold text-[#c86c79] hover:underline">
               Login
             </a>
           </div>

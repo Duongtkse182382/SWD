@@ -69,10 +69,10 @@ export default function ServiceDetails() {
     }
     localStorage.setItem("serviceId", id);
     sessionStorage.setItem("serviceId", id);
-    localStorage.setItem("serviceUrl", `/services/${id}/consultant-customer`);
-    sessionStorage.setItem("serviceUrl", `/services/${id}/consultant-customer`);
-    navigate(`/services/${id}/consultant-customer`);
-    console.log("Navigating to:", `/services/${id}/consultant-customer`);
+    localStorage.setItem("serviceUrl", `/dịch vụ/${id}/chon-chuyen-vien`);
+    sessionStorage.setItem("serviceUrl", `/dịch vụ/${id}/chon-chuyen-vien`);
+    navigate(`/dịch vụ/${id}/chon-chuyen-vien`);
+    console.log("Navigating to:", `/dịch vụ/${id}/chon-chuyen-vien`);
   };
 
   const handleLoginRedirect = () => {
@@ -123,7 +123,7 @@ export default function ServiceDetails() {
             {/* Hiển thị avg sao rating của ServiceId tương ứng bằng filter */}
 
             <div className="flex items-center mt-4">
-              <div className="flex text-yellow-500 text-2xl mr-2">
+              <span className="text-yellow-500 text-2xl mr-2">
                 {Array.from({ length: 5 }, (_, i) => {
                   const starValue = i + 1;
                   if (averageRating >= starValue) {
@@ -134,8 +134,8 @@ export default function ServiceDetails() {
                     return <FaRegStar key={i} />;
                   }
                 })}
-              </div>
-              <span className="text-gray-700 text-lg ml-2">({averageRating.toFixed(1)} / 5)</span>
+              </span>
+              <span className="text-gray-700 text-lg">({averageRating.toFixed(1)} / 5)</span>
             </div>
 
             {/* Product Price */}

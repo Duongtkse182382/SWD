@@ -17,7 +17,6 @@ import ServiceManagement from "../pages/manager/ServiceManagement.jsx";
 import StaffManagement from "../pages/manager/StaffManagement.jsx";
 import Dashboard from "../pages/manager/Dashboard.jsx";
 import TherapistManagement from "../pages/manager/TherapistManagement.jsx";
-// import ResetPassword from "./pages/guest/ResetPassword.jsx";
 import BlogManagement from "../pages/manager/BlogManagement.jsx";
 import QuestionManagement from "../pages/manager/QuestionManagement.jsx";
 import ProductManagement from "../pages/manager/ProductManagement.jsx";
@@ -40,6 +39,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ViewBooked from "../pages/consultant/ViewBooked.jsx";
 import { PaySuccessOrder } from "../pages/customer/PaySuccessOrder.jsx";
 import { PayFailedOrder } from "../pages/customer/PayFailedOrder.jsx";
+import ResetPassword from "../pages/guest/Resetpassword.jsx";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
@@ -91,7 +91,7 @@ function AppRoute() {
             <Route path="/dang-nhap" element={<LoginPage />} />
             <Route path="/dang-ky" element={<RegisterPage />} />
             <Route path="/quen-mat-khau" element={<ForgotPassword />} />
-            {/* <Route path="/doi-mat-khau" element={<ResetPassword />} /> */}
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/xac-nhan-email" element={<VerifyEmailPage />} />
 
             {/* Guest & Customer Shared Pages */}
