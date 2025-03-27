@@ -82,8 +82,8 @@ export default function ResetPassword() {
       {/* Reset Password Section */}
       <div className="flex flex-grow items-center justify-center relative z-10 px-4">
         <div className="w-full max-w-md bg-white bg-opacity-90 backdrop-blur-lg shadow-lg rounded-2xl p-8">
-          <h2 className="text-center text-2xl font-bold text-[#c86c79] uppercase mb-6">
-            Reset Password
+          <h2 className="text-center text-2xl font-bold text-[#2B6A7C] uppercase mb-6">
+            Đặt lại mật khẩu
           </h2>
 
           {/* Success & Error Messages */}
@@ -94,11 +94,11 @@ export default function ResetPassword() {
           <form onSubmit={handleResetPassword}>
             {/* New Password Input */}
             <div className="mb-4">
-              <label className="block text-lg font-semibold mb-2 text-gray-700">New Password</label>
+              <label className="block text-lg font-semibold mb-2 text-gray-700">Nhập mật khẩu mới</label>
               <div className="relative w-full">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
+                placeholder="Nhập mật khẩu mới"
                 value={newPassword}
                 onChange={(e) => {
                   setNewPassword(e.target.value);
@@ -120,17 +120,17 @@ export default function ResetPassword() {
 
             {/* Confirm Password Input */}
             <div className="mb-6">
-              <label className="block text-lg font-semibold mb-2 text-gray-700">Confirm Password</label>
+              <label className="block text-lg font-semibold mb-2 text-gray-700">Xác nhận mật khẩu mới</label>
               <div className="relative w-full">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm new password"
+                placeholder="Xác nhận mật khẩu mới"
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                   setErrors((prev) => ({ ...prev, confirmPassword: "" })); // Clear error on change
                 }}
-                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#c86c79]"
+                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A7DFEC]"
                 required
               />
               <button
@@ -148,19 +148,18 @@ export default function ResetPassword() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="w-full h-12 bg-[#c86c79] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#b25668] transition duration-300 disabled:opacity-50"
+                className="w-full h-12 bg-[#A7DFEC] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#2B6A7C] transition duration-300 disabled:opacity-50"
                 disabled={loading}
               >
-                {loading ? "Resetting..." : "Reset Password"}
+                {loading ? "Đang đặt lại..." : "Đặt lại mật khẩu"}
               </button>
             </div>
           </form>
 
           {/* Back to Login */}
           <div className="text-center mt-4 text-gray-700">
-            <span>Remember your password? </span>
-            <a href="/login" className="font-semibold text-[#c86c79] hover:underline">
-              Login
+            <a href="/dang-nhap" className="font-semibold text-[#2B6A7C] hover:underline">
+              Đăng nhập
             </a>
           </div>
         </div>

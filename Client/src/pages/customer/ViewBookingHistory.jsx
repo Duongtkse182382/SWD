@@ -524,7 +524,7 @@ const ViewBookingHistory = () => {
                                 Hủy
                             </button>
                             <button
-                                className="py-2 px-6 bg-[#f1baba] text-white rounded-lg hover:bg-[#e78999] transition"
+                                className="py-2 px-6 bg-[#A7DFEC] text-white rounded-lg hover:bg-[#2B6A7C] transition"
                                 onClick={() => handleCancelBooking(selectedBookingId)}
                             >
                                 Có

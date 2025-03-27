@@ -48,8 +48,8 @@ export default function ForgotPassword() {
       {/* Forgot Password Section */}
       <div className="flex flex-grow items-center justify-center relative z-10 px-4">
         <div className="w-full max-w-md bg-white bg-opacity-90 backdrop-blur-lg shadow-lg rounded-2xl p-8">
-          <h2 className="text-center text-2xl font-bold text-[#c86c79] uppercase mb-6">
-            Forgot Password
+          <h2 className="text-center text-2xl font-bold text-[#2B6A7C] uppercase mb-6">
+            Quên mật khẩu
           </h2>
 
           {/* Success & Error Messages */}
@@ -62,10 +62,10 @@ export default function ForgotPassword() {
               <label className="block text-lg font-semibold mb-2 text-gray-700">Email</label>
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Nhập email của bạn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#c86c79]"
+                className="w-full h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A7DFEC]"
                 required
               />
             </div>
@@ -74,19 +74,19 @@ export default function ForgotPassword() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="w-full h-12 bg-[#c86c79] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#b25668] transition duration-300 disabled:opacity-50"
+                className="w-full h-12 bg-[#A7DFEC] text-white text-lg font-semibold rounded-full shadow-md hover:bg-[#2B6A7C] transition duration-300 disabled:opacity-50"
                 disabled={loading}
               >
-                {loading ? "Sending..." : "Reset Password"}
+                {loading ? "Đang gửi..." : "Thay đổi mật khẩu"}
               </button>
             </div>
           </form>
 
           {/* Login Link */}
           <div className="text-center mt-4 text-gray-700">
-            <span>Remember your password? </span>
-            <a href="/login" className="font-semibold text-[#c86c79] hover:underline">
-              Login
+            <span>Bạn đã nhớ mật khẩu của mình? </span>
+            <a href="/dang-nhap" className="font-semibold text-[#2B6A7C] hover:underline">
+              Đăng nhập
             </a>
           </div>
         </div>
