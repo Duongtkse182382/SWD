@@ -72,7 +72,7 @@ const CustomerProfile = () => {
         try {
             await axios.put(`/api/customers/${userId}`, customer); // Change to PUT for updating
             setIsEditing(false);
-            setSuccess("Profile updated successfully!");
+            setSuccess("Cập nhật thành công!");
             localStorage.removeItem("fullName");
             localStorage.setItem(
                 "fullName",

@@ -174,7 +174,7 @@ const ViewBooking = () => {
   const filteredBookings = bookings.filter((booking) => {
     const customerName = booking.customerInfo
       ? `${booking.customerInfo.firstName} ${booking.customerInfo.lastName}`
-      : "Unknown";
+      : "Chưa rõ";
     return customerName.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
@@ -201,7 +201,7 @@ const ViewBooking = () => {
         <div className="flex justify-between items-center mb-4">
           <input
             type="text"
-            placeholder="Search by customer name..."
+            placeholder="Tìm kiếm theo tên khách hàng"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border p-2 rounded w-1/3"
@@ -211,11 +211,11 @@ const ViewBooking = () => {
             onChange={(e) => setSortStatus(e.target.value)}
             className="border p-2 rounded"
           >
-            <option value="">Sort by Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="">Sắp xếp theo trạng thái</option>
+            <option value="Pending">Chờ xác nhận</option>
+            <option value="Confirmed">Xác nhận</option>
+            <option value="Completed">Hoàn thành</option>
+            <option value="Cancelled">Hủy</option>
           </select>
         </div>
 
@@ -224,14 +224,14 @@ const ViewBooking = () => {
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border p-2 text-center">Customer Name</th>
-              <th className="border p-2 text-center">Service Name</th>
-              <th className="border p-2 text-center">Date</th>
-              <th className="border p-2 text-center">Time</th>
-              <th className="border p-2 text-center">Consultant</th>
-              <th className="border p-2 text-center">Status</th>
-              <th className="border p-2 text-center">Actions</th>
-              <th className="border p-2 text-center">Payment</th>
+              <th className="border p-2 text-center">Tên khách hàng</th>
+              <th className="border p-2 text-center">Dịch vụ</th>
+              <th className="border p-2 text-center">Ngày</th>
+              <th className="border p-2 text-center">Giờ</th>
+              <th className="border p-2 text-center">Chuyên viên</th>
+              <th className="border p-2 text-center">Trạng thái</th>
+              <th className="border p-2 text-center">Hành động</th>
+              <th className="border p-2 text-center">Thanh toán</th>
             </tr>
           </thead>
           <tbody>
@@ -241,7 +241,7 @@ const ViewBooking = () => {
                 <td className="border p-2 text-center">
                   {booking.customerInfo
                     ? `${booking.customerInfo.firstName} ${booking.customerInfo.lastName}`
-                    : "Unknown"}
+                    : "Chưa rõ"}
                 </td>
                 <td className="border p-2 text-center">
                   {booking.serviceID?.name || "Not Available"}

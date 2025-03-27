@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../utils/axiosInstance";
-import CustomerSidebar from "../../components/CustomerSideBar";
+import CustomerSidebar from "../../components/CustomerSidebar";
 import { MdVerified, MdClose } from "react-icons/md";
 import {
     Fab,
@@ -318,9 +318,9 @@ const BookingProductsHistory = () => {
                             <Table>
                                 <TableHead className="bg-[#A7DFEC] text-white">
                                     <TableRow>
-                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Sản phẩm</TableCell>
-                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color:'#444444'  }}>Ngày</TableCell>
-                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color:'#444444'  }}>Trạng thái</TableCell>
+                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Sản phẩm</TableCell>
+                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Ngày</TableCell>
+                                        <TableCell align="center" style={{ width: '33%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Trạng thái</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -427,7 +427,7 @@ const BookingProductsHistory = () => {
                                 className="rounded-full px-6 shadow-md"
                                 onClick={closeConsultantModal}
                             >
-                                Close
+                                Đóng
                             </Button>
                         </div>
                     </motion.div>
@@ -444,7 +444,7 @@ const BookingProductsHistory = () => {
                         "&:hover": { backgroundColor: "#A7DFEC" },
                     }}
                 >
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#a2B6A7C92a4e] opacity-75"></span>
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#A7DFEC] opacity-75"></span>
                     <HomeIcon />
                 </Fab>
             </div>
