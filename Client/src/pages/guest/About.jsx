@@ -426,7 +426,7 @@ export default function About() {
                 </div>
             )}
 
-            {cart.length > 0 && (
+            {/* {cart.length > 0 && (
                 <div className="text-center mt-8">
                     <button
                         onClick={handleCheckout}
@@ -435,7 +435,7 @@ export default function About() {
                         Thanh toán
                     </button>
                 </div>
-            )}
+            )} */}
 
             {/* Zoomed Image Modal */}
             {zoomedImage && (
