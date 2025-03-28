@@ -135,7 +135,7 @@ export default function ServiceDetails() {
                   }
                 })}
               </div>
-              <span className="text-gray-700 text-lg">({averageRating.toFixed(1)} / 5)</span>
+              {/* <span className="text-gray-700 text-lg">({averageRating.toFixed(1)} / 5)</span> */}
             </div>
 
             {/* Product Price */}

@@ -239,7 +239,7 @@ export default function About() {
             <div
                 className="h-[500px] w-full flex items-center justify-center text-white text-center"
                 style={{
-                    backgroundImage: "url('/images/home.png')",
+                    backgroundImage: "url('/images/aboutus.png')",
                     backgroundSize: "cover",  // Giúp ảnh bao phủ toàn bộ phần hero
                     backgroundPosition: "center",  // Căn giữa ảnh
                     backgroundRepeat: "no-repeat", // Không lặp lại ảnh
@@ -253,27 +253,42 @@ export default function About() {
 
             {/* Body Section */}
             <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
-                <div className="max-w-4xl mx-auto px-4 py-16 text-gray-800"> {/* Adjusted margins */}
+                <div className="max-w-4xl mx-auto px-4 py-16 text-gray-800">
                     <h2 className="text-3xl font-bold text-center mb-6">
-                        <span className="text-[#075E76]">LÀN DA KHỎE ĐẸP</span> TỪ THIÊN NHIÊN - AN TOÀN VÀ HIỆU QUẢ!
+                        <span className="text-[#075E76] relative inline-block">
+                            SRITINY - CHUYÊN GIA CHĂM SÓC DA
+                            <span className="absolute w-full h-[3px] bg-[#075E76] bottom-0 left-0 transform scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
+                        </span>
                     </h2>
                     <p className="text-lg text-center leading-relaxed">
-                        Từ năm 1973, Revivalabs đã theo đuổi một sứ mệnh duy nhất: tạo ra những sản phẩm chăm sóc da an toàn, hiệu quả và mang lại kết quả rõ rệt với mức giá hợp lý.
-                        Chúng tôi tự hào khi biết rằng sản phẩm của mình được tin dùng qua nhiều thế hệ – từ bà, mẹ đến con gái.
+                        Sritiny tự hào là đơn vị hàng đầu trong lĩnh vực chăm sóc da, mang đến những giải pháp hiệu quả giúp bạn sở hữu làn da khỏe đẹp, rạng rỡ.
+                        Chúng tôi không chỉ cung cấp các sản phẩm chăm sóc da chất lượng cao mà còn có đội ngũ chuyên viên giàu kinh nghiệm, sẵn sàng tư vấn và đồng hành cùng bạn.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-                        <img src="client/public/images/about_2.png" alt="Lịch sử thương hiệu" className="rounded-lg shadow-lg" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 items-center">
+                        <div className="size-full relative group flex justify-center items-center">
+                            <img
+                                src='/images/about.png'
+                                alt="Dịch vụ chăm sóc da"
+                                className="rounded-lg shadow-md transform transition-transform duration-300 group-hover:scale-105 max-h-[400px] object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
                         <div>
                             <p className="text-lg leading-relaxed">
-                                Hành trình của Revivalabs là một câu chuyện về sự đổi mới, niềm tin và sự bền vững. Từ những ngày đầu tiên, chúng tôi đã theo đuổi 100% nguyên liệu thiên nhiên, trước khi xu hướng này trở thành phổ biến trên toàn cầu.
+                                Đội ngũ chuyên viên của Sritiny được đào tạo bài bản, luôn cập nhật những công nghệ và phương pháp chăm sóc da tiên tiến nhất.
+                                Chúng tôi tin rằng làn da đẹp không chỉ đến từ bên ngoài mà còn từ sự chăm sóc chuyên sâu và phù hợp.
                             </p>
                             <p className="mt-4 text-lg leading-relaxed">
-                                Ngày nay, chúng tôi tiếp tục phát triển những sản phẩm chăm sóc da tự nhiên giúp bạn có làn da rạng rỡ và khỏe mạnh hơn mỗi ngày. Hãy cùng chúng tôi viết tiếp câu chuyện này!
+                                Ngoài các liệu trình spa chuyên nghiệp, chúng tôi còn cung cấp những sản phẩm dưỡng da an toàn, được kiểm chứng về chất lượng, giúp bạn duy trì vẻ đẹp lâu dài ngay tại nhà.
                             </p>
                         </div>
                     </div>
+                    <p className="text-center text-balance mt-8 text-xl leading-relaxed font-semibold">
+                        Hãy để Sritiny đồng hành cùng bạn trên hành trình chăm sóc làn da – nơi vẻ đẹp và sự tự tin luôn tỏa sáng!
+                    </p>
                 </div>
+
 
                 <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">

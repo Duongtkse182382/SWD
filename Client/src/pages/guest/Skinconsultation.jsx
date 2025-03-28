@@ -116,13 +116,13 @@ export default function Skinconsultation() {
             {/* Services Hero Section */}
             <div className="h-[500px] w-full flex items-center justify-center text-white text-center"
                 style={{
-                    backgroundImage: "url('/images/service.png')",
+                    backgroundImage: "url('/images/therapist.png')",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                     backgroundAttachment: "fixed"
                 }}>
-                <h1 className="text-5xl font-semibold bg-opacity-50 px-6 py-4 rounded-lg">Chọn chuyên viên của bạn</h1>
+                <h1 className="text-5xl font-semibold bg-opacity-50 px-6 py-4 rounded-lg">Chuyên viên của chúng tôi</h1>
             </div>
 
             {/* Main Content */}
@@ -170,9 +170,9 @@ export default function Skinconsultation() {
                                             }
                                         })}
                                     </div>
-                                    <span className="text-gray-700 text-lg">
+                                    {/* <span className="text-gray-700 text-lg">
                                         ({getAverageRating(consultant._id)} / 5)
-                                    </span>
+                                    </span> */}
                                 </div>
 
                                 {/* Additional Notes */}

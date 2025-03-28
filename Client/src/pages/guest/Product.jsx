@@ -180,7 +180,7 @@ export default function Product() {
       <div
         className="h-[500px] w-full flex items-center justify-center text-white text-center"
         style={{
-          backgroundImage: "url('/images/service.png')",
+          backgroundImage: "url('/images/product.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
