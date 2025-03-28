@@ -156,3 +156,17 @@ exports.getFeedbackByService = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getFeedbackByConsultant = async (req, res) => {
+  try {
+    const feedback = await Feedback.find({ consultantId: req.params.consultantId })
+      .populate({
+        path: "bookingRequestId",
+        populate: { path: "customerID", select: "firstName lastName avatar" } // Lấy thông tin khách hàng
+      });
+
+    res.status(200).json(feedback);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

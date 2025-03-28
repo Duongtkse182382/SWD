@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaStar, FaStarHalfAlt, FaRegStar, FaAngleRight , FaAngleLeft  } from 'react-icons/fa';
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { motion } from "framer-motion";
 import axios from "../../utils/axiosInstance";
+
 
 export default function Skinconsultation() {
     const navigate = useNavigate();
@@ -12,6 +14,8 @@ export default function Skinconsultation() {
     const [consultants, setConsultants] = useState([]);
     const [cart, setCart] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
+    const [detailedFeedbacks, setDetailedFeedbacks] = useState([]); // Thêm state riêng cho bình luận chi tiết
+    const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0); // State for pagination
     const cartData = JSON.parse(localStorage.getItem("cart")) || [];
     useEffect(() => {
         setCart(cartData);
@@ -39,21 +43,30 @@ export default function Skinconsultation() {
 
     const fetchFeedbacks = async () => {
         try {
-            const res = await axios.get("/api/feedbacks");
+            const res = await axios.get(`/api/feedbacks/consultant-rating`);
             setFeedbacks(res.data);
         } catch (err) {
             console.error("Failed to fetch feedbacks:", err);
         }
     };
 
+    const fetchConsultantFeedbacks = async (consultantId) => {
+        try {
+            const res = await axios.get(`/api/feedbacks/consultant/${consultantId}`);
+            return res.data;
+        } catch (err) {
+            console.error("Failed to fetch consultant feedbacks:", err);
+            return [];
+        }
+    };
+
     const getFeedbackForConsultant = (consultantId) => {
-        return feedbacks.filter(feedback => feedback.consultantId === consultantId);
+        return feedbacks.filter(feedback => feedback._id === consultantId);
     };
 
     const getAverageRating = (consultantId) => {
-        const feedbacksForConsultant = getFeedbackForConsultant(consultantId);
-        const totalRating = feedbacksForConsultant.reduce((sum, feedback) => sum + feedback.consultantRating, 0);
-        return (totalRating / feedbacksForConsultant.length).toFixed(1);
+        const feedback = feedbacks.find(feedback => feedback._id === consultantId);
+        return feedback ? feedback.averageRating.toFixed(1) : "0.0";
     };
 
     const getCustomerName = (bookingRequestId) => {
@@ -77,8 +90,24 @@ export default function Skinconsultation() {
     //     navigate(`/dịch vụ/${id}/chon-chuyen-vien/${consultantId}/lich-hen`);
     // };
 
-    const handleViewMore = (index) => {
+    const handleViewMore = async (index, consultantId) => {
         setVisibleNoteIndex(visibleNoteIndex === index ? null : index);
+        if (visibleNoteIndex !== index) {
+            const feedbacks = await fetchConsultantFeedbacks(consultantId);
+            setDetailedFeedbacks(feedbacks); // Lưu bình luận chi tiết vào state riêng
+        }
+    };
+
+    const handleNextFeedback = () => {
+        setCurrentFeedbackIndex((prevIndex) =>
+            (prevIndex + 1) % detailedFeedbacks.length
+        );
+    };
+
+    const handlePreviousFeedback = () => {
+        setCurrentFeedbackIndex((prevIndex) =>
+            (prevIndex - 1 + detailedFeedbacks.length) % detailedFeedbacks.length
+        );
     };
 
     return (
@@ -127,32 +156,65 @@ export default function Skinconsultation() {
                                 </h2>
                                 <p className="text-gray-600 mt-2">{consultant.note}</p>
 
+                                {/* Average Rating */}
+                                <div className="flex items-center mt-4">
+                                    <div className="flex text-yellow-500 text-2xl mr-2">
+                                        {Array.from({ length: 5 }, (_, i) => {
+                                            const starValue = i + 1;
+                                            if (getAverageRating(consultant._id) >= starValue) {
+                                                return <FaStar key={i} />;
+                                            } else if (getAverageRating(consultant._id) >= starValue - 0.5) {
+                                                return <FaStarHalfAlt key={i} />;
+                                            } else {
+                                                return <FaRegStar key={i} />;
+                                            }
+                                        })}
+                                    </div>
+                                    <span className="text-gray-700 text-lg">
+                                        ({getAverageRating(consultant._id)} / 5)
+                                    </span>
+                                </div>
+
                                 {/* Additional Notes */}
                                 {visibleNoteIndex === index && (
                                     <div className="text-gray-600 mt-2">
-                                        <p>No additional notes available.</p>
-                                        <div className="mt-4">
-                                            <h3 className="text-xl font-semibold">Customer Feedback</h3>
-                                            <p><strong>Average Rating:</strong> {getAverageRating(consultant._id)}⭐</p>
-                                            {getFeedbackForConsultant(consultant._id).slice(0, 3).map(feedback => (
-                                                <div key={feedback._id} className="mt-2">
-                                                    <p><strong>{getCustomerName(feedback.bookingRequestId)}:</strong> {feedback.consultantComment}</p>
+                                        <h3 className="text-xl text-[#2B6A7C] font-semibold">Đánh giá của khách hàng</h3>
+                                        {detailedFeedbacks.length > 0 ? (
+                                            <div className="mt-2">
+                                                <p>
+                                                    <strong>
+                                                        {detailedFeedbacks[currentFeedbackIndex]?.bookingRequestId?.customerID?.firstName || "Anonymous"}:
+                                                    </strong>
+                                                    {detailedFeedbacks[currentFeedbackIndex]?.consultantComment || "No comment"}
+                                                </p>
+                                                <div className="flex gap-1 mt-4">
+                                                    <button
+                                                        className="px-4 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                                                        onClick={handlePreviousFeedback}
+                                                    >
+                                                        <FaAngleLeft />
+                                                    </button>
+                                                    <button
+                                                        className="px-4 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                                                        onClick={handleNextFeedback}
+                                                    >
+                                                        <FaAngleRight />
+                                                    </button>
                                                 </div>
-                                            ))}
-                                            {getFeedbackForConsultant(consultant._id).length > 3 && (
-                                                <p className="mt-2 text-blue-500">View more comments...</p>
-                                            )}
-                                        </div>
+                                            </div>
+                                        ) : (
+                                            <p>Không có đánh giá khả dụng.</p>
+                                        )}
                                     </div>
                                 )}
 
                                 {/* Buttons */}
-                                <div className="flex gap-4 mt-4">
+                                <div className="flex gap-4 mt-4 font-semibold">
                                     <button
                                         className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
-                                        onClick={() => handleViewMore(index)}
+                                        onClick={() => handleViewMore(index, consultant._id)}
                                     >
-                                        {visibleNoteIndex === index ? "Hide" : "Xem thêm"}
+                                        {visibleNoteIndex === index ? "Ẩn" : "Xem thêm"}
                                     </button>
                                 </div>
                             </div>

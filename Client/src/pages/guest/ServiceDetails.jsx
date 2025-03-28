@@ -123,7 +123,7 @@ export default function ServiceDetails() {
             {/* Hiển thị avg sao rating của ServiceId tương ứng bằng filter */}
 
             <div className="flex items-center mt-4">
-              <span className="text-yellow-500 text-2xl mr-2">
+              <div className="flex text-yellow-500 text-2xl mr-2">
                 {Array.from({ length: 5 }, (_, i) => {
                   const starValue = i + 1;
                   if (averageRating >= starValue) {
@@ -134,7 +134,7 @@ export default function ServiceDetails() {
                     return <FaRegStar key={i} />;
                   }
                 })}
-              </span>
+              </div>
               <span className="text-gray-700 text-lg">({averageRating.toFixed(1)} / 5)</span>
             </div>
 
@@ -187,7 +187,7 @@ export default function ServiceDetails() {
             // Kiểm tra nếu có bookingRequestId và customerID
             const customer = comment.bookingRequestId?.customerID;
             const avatarUrl = customer?.avatar || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            const fullName = customer ? `${customer.firstName} ${customer.lastName}` : "Anonymous";
+            const fullName = customer ? `${customer.firstName} ${customer.lastName}` : "Ẩn danh";
 
             return (
               <div key={index} className="border-b border-gray-200 pb-6 mb-6">
@@ -198,11 +198,9 @@ export default function ServiceDetails() {
                   {/* Tên và Rating */}
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-gray-800 text-lg">{fullName}</p>
-
-                    {/* Rating sao */}
                     <div className="flex text-yellow-500 text-sm">
                       {Array.from({ length: Math.max(0, Math.min(comment.serviceRating, 5)) }).map((_, i) => (
-                        <span key={i}>⭐</span>
+                        <FaStar key={i} />
                       ))}
                     </div>
                   </div>
@@ -223,21 +221,21 @@ export default function ServiceDetails() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Log in to booking
+              Đăng nhập để đặt dịch vụ
             </h3>
-            <p className="text-gray-600">You need to be logged in to book now. Do you want to log in now?</p>
+            <p className="text-gray-600 font-medium">Bạn cần đăng nhập để có thể đặt lịch.</p><p className="text-gray-600 font-semibold"> Đăng nhập ngay?</p>
             <div className="flex justify-center gap-4 mt-4">
               <button
                 className="py-2 px-6 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
                 onClick={() => setShowLoginModal(false)}
               >
-                Cancel
+                Hủy
               </button>
               <button
                 className="py-2 px-6 bg-[#A7DFEC] text-white rounded-lg hover:bg-[#2B6A7C] transition"
                 onClick={handleLoginRedirect}
               >
-                Log In
+                Đăng nhập
               </button>
             </div>
           </div>
