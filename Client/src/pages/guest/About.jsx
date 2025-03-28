@@ -2,7 +2,7 @@ import Navbar from "../../components/Navbar";
 import { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import axios from "../../utils/axiosInstance";
-
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 export default function About() {
 
@@ -183,30 +183,22 @@ export default function About() {
             }
         };
 
-        fetchConsultants();
-    }, []);
-
-    useEffect(() => {
         const fetchFeedbacks = async () => {
             try {
-                const res = await axios.get("/api/feedbacks");
+                const res = await axios.get("/api/feedbacks/consultant-rating");
                 setFeedbacks(res.data);
             } catch (err) {
                 console.error("Failed to fetch feedbacks:", err);
             }
         };
 
+        fetchConsultants();
         fetchFeedbacks();
     }, []);
 
-    const getFeedbackForConsultant = (consultantId) => {
-        return feedbacks.filter(feedback => feedback.consultantId === consultantId);
-    };
-
     const getAverageRating = (consultantId) => {
-        const feedbacksForConsultant = getFeedbackForConsultant(consultantId);
-        const totalRating = feedbacksForConsultant.reduce((sum, feedback) => sum + feedback.consultantRating, 0);
-        return (totalRating / feedbacksForConsultant.length).toFixed(1);
+        const feedback = feedbacks.find(feedback => feedback._id === consultantId);
+        return feedback ? feedback.averageRating.toFixed(1) : "0.0";
     };
 
     if (loading) {
@@ -327,6 +319,14 @@ export default function About() {
                     </div>
                 </div>
 
+                {/* Services Section */}
+                <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
+                    <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
+                        Những dịch vụ của chúng tôi:
+                    </div>
+
+                </div>
+
                 {/* Consultants Section */}
                 <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
@@ -336,7 +336,7 @@ export default function About() {
                         {consultants.map((consultant) => (
                             <div
                                 key={consultant._id}
-                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between h-full"
                             >
                                 {/* Consultant Image */}
                                 <div className="w-full h-48 overflow-hidden cursor-pointer" onClick={() => handleConsultantImageClick(consultant.image || "/images/default-consultant.png")}>
@@ -348,11 +348,11 @@ export default function About() {
                                 </div>
 
                                 {/* Consultant Details */}
-                                <div className="px-6 pt-6 flex-grow">
+                                <div className="px-6 pt-6 pb-6 flex-grow flex flex-col">
                                     <h3 className="text-xl font-bold mb-2">
                                         {consultant.firstName} {consultant.lastName}
                                     </h3>
-                                    <p className="text-gray-600 mb-2">
+                                    <p className="text-gray-600 mb-4 flex-grow">
                                         {expandedConsultant === consultant._id ? consultant.note : `${consultant.note.substring(0, 100)}...`}
                                         {consultant.note.length > 100 && (
                                             <button onClick={() => toggleConsultantNote(consultant._id)} className="text-blue-500 ml-2">
@@ -362,14 +362,20 @@ export default function About() {
                                     </p>
                                     <div className="text-gray-600 mt-2">
                                         <h3 className="text-lg mt-5 mb-1 font-bold">Đánh giá của khách hàng</h3>
-                                        {getFeedbackForConsultant(consultant._id).length === 0 ? (
-                                            <h3><strong>Điểm trung bình: </strong>Không có điểm đánh giá nào về chuyên viên này.</h3>
-                                        ) : (
-                                            <div className="mt-4">
-                                                <h3 className="text-base font-semibold">Điểm trung bình:</h3>
-                                                <p><strong>{getAverageRating(consultant._id)}⭐</strong></p>
+                                        <div className="flex items-center mt-4">
+                                            <div className="flex text-yellow-500 text-2xl mr-2">
+                                                {Array.from({ length: 5 }, (_, i) => {
+                                                    const starValue = i + 1;
+                                                    if (getAverageRating(consultant._id) >= starValue) {
+                                                        return <FaStar key={i} />;
+                                                    } else if (getAverageRating(consultant._id) >= starValue - 0.5) {
+                                                        return <FaStarHalfAlt key={i} />;
+                                                    } else {
+                                                        return <FaRegStar key={i} />;
+                                                    }
+                                                })}
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
