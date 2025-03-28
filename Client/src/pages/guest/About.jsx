@@ -2,9 +2,11 @@ import Navbar from "../../components/Navbar";
 import { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import axios from "../../utils/axiosInstance";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 export default function About() {
+    const navigate = useNavigate(); // Khai báo navigate
 
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
@@ -19,6 +21,9 @@ export default function About() {
     const [consultants, setConsultants] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
     const [expandedConsultant, setExpandedConsultant] = useState(null); // State for expanded consultant
+    const [expandedServices, setExpandedServices] = useState(null); // State for expanded consultant
+    const [services, setServices] = useState([]); // State for services
+
 
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
@@ -152,6 +157,9 @@ export default function About() {
     const toggleConsultantNote = (consultantId) => {
         setExpandedConsultant(expandedConsultant === consultantId ? null : consultantId);
     };
+    const toggleServiceNote = (ServiceId) => {
+        setExpandedServices(expandedServices === ServiceId ? null : ServiceId);
+    };
 
     const handleConsultantImageClick = (imgURL) => {
         setZoomedImage(imgURL);
@@ -194,6 +202,19 @@ export default function About() {
 
         fetchConsultants();
         fetchFeedbacks();
+    }, []);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get("/api/services");
+                setServices(response.data);
+            } catch (err) {
+                console.error("Failed to fetch services:", err);
+            }
+        };
+
+        fetchServices();
     }, []);
 
     const getAverageRating = (consultantId) => {
@@ -317,6 +338,14 @@ export default function About() {
                             </div>
                         ))}
                     </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/sản phẩm")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem tất cả sản phẩm
+                        </button>
+                    </div>
                 </div>
 
                 {/* Services Section */}
@@ -324,11 +353,61 @@ export default function About() {
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
                         Những dịch vụ của chúng tôi:
                     </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {services.slice(0, 4).map((service) => ( // Giới hạn hiển thị 4 dịch vụ
+                            <div
+                                key={service._id}
+                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+                            >
+                                {/* Service Image */}
+                                <div className="w-full h-48 overflow-hidden cursor-pointer" onClick={() => navigate(`/dịch vụ/${service._id}`)}>
+                                    <img
+                                        src={service.image || "/images/default-service.png"}
+                                        alt={service.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
 
+                                {/* Service Details */}
+                                <div className="px-6 pt-6 pb-6 flex-grow flex flex-col">
+                                    <h3 className="text-xl font-bold mb-2">{service.name}</h3>
+                                    <p className="text-gray-600 mb-4 flex-grow">
+                                        {expandedServices === service._id
+                                            ? service.description
+                                            : `${service.description.substring(0, 200)}...`}
+                                        {service.description.length > 200 && (
+                                            <button
+                                                onClick={() =>
+                                                    setExpandedServices(
+                                                        expandedServices === service._id ? null : service._id
+                                                    )
+                                                }
+                                                className="text-blue-500 ml-2"
+                                            >
+                                                {expandedServices === service._id ? "Thu gọn" : "Xem thêm"}
+                                            </button>
+                                        )}
+                                    </p>
+                                    <div className="text-gray-600 mt-2">
+                                        <h3 className="text-lg font-bold">Giá:</h3>
+                                        <p className="text-[#2B6A7C] font-semibold">{service.price.toLocaleString('vi-VN')} VND</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/dịch vụ")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem tất cả dịch vụ
+                        </button>
+                    </div>
                 </div>
 
                 {/* Consultants Section */}
-                <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
+                <div className="max-w-7xl mx-auto pb py-16 text-[#2B6A7C]">
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
                         Những chuyên viên của chúng tôi:
                     </div>
@@ -380,6 +459,14 @@ export default function About() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/chuyên viên tư vấn")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem thêm chuyên viên
+                        </button>
                     </div>
                 </div>
             </div>
