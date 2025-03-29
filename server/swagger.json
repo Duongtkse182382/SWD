@@ -45,6 +45,18 @@
     {
       "name": "Feedbacks",
       "description": "Feedback management"
+    },
+    {
+      "name": "OrderItems",
+      "description": "Order item management"
+    },
+    {
+      "name": "OrderProducts",
+      "description": "Order product management"
+    },
+    {
+      "name": "Products",
+      "description": "Product management"
     }
   ],
   "components": {
@@ -530,6 +542,145 @@
           "consultantId",
           "serviceRating",
           "consultantRating"
+        ]
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The auto-generated id of the order item"
+          },
+          "orderID": {
+            "type": "string",
+            "description": "The ID of the associated order"
+          },
+          "productID": {
+            "type": "string",
+            "description": "The ID of the associated product"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "The quantity of the product in the order",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "orderID",
+          "productID",
+          "quantity"
+        ]
+      },
+      "OrderProduct": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The auto-generated id of the order"
+          },
+          "customerID": {
+            "type": "string",
+            "description": "The ID of the customer who placed the order"
+          },
+          "orderCode": {
+            "type": "string",
+            "description": "The unique code for the order"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Pending",
+              "Confirmed",
+              "Cancelled",
+              "Completed"
+            ],
+            "description": "The status of the order"
+          },
+          "orderItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "description": "The list of items in the order"
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "The total price of the order"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "Cash",
+              "Credit Card",
+              "PayPal",
+              "PayOS"
+            ],
+            "description": "The payment method used for the order"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date when the order was created"
+          }
+        },
+        "required": [
+          "customerID",
+          "orderCode",
+          "status",
+          "orderItems",
+          "totalPrice",
+          "paymentMethod"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The auto-generated id of the product"
+          },
+          "productName": {
+            "type": "string",
+            "description": "The name of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the product"
+          },
+          "price": {
+            "type": "number",
+            "description": "The price of the product",
+            "minimum": 0
+          },
+          "availability": {
+            "type": "boolean",
+            "description": "The availability status of the product"
+          },
+          "stock": {
+            "type": "number",
+            "description": "The stock quantity of the product",
+            "minimum": 0
+          },
+          "imgURL": {
+            "type": "string",
+            "description": "The URL of the product image"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date when the product was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date when the product was last updated"
+          }
+        },
+        "required": [
+          "productName",
+          "description",
+          "price",
+          "stock"
         ]
       }
     }
@@ -2852,6 +3003,1471 @@
           },
           "500": {
             "description": "An error occurred while fetching consultant ratings"
+          }
+        }
+      }
+    },
+    "/order-items/{orderID}": {
+      "get": {
+        "summary": "Get all order items for a specific order",
+        "tags": [
+          "OrderItems"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all order items for the specified order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderItem"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "An error occurred while fetching order items"
+          }
+        }
+      }
+    },
+    "/order-items": {
+      "post": {
+        "summary": "Add a new order item",
+        "tags": [
+          "OrderItems"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order item added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or order not in a valid state"
+          },
+          "403": {
+            "description": "Unauthorized to add items to this order"
+          },
+          "500": {
+            "description": "An error occurred while adding the order item"
+          }
+        }
+      }
+    },
+    "/order-items/{id}": {
+      "put": {
+        "summary": "Update the quantity of an order item",
+        "tags": [
+          "OrderItems"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order item"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "number",
+                    "description": "The new quantity for the order item",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "quantity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order item quantity updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid quantity or order not in a valid state"
+          },
+          "403": {
+            "description": "Unauthorized to update this order item"
+          },
+          "404": {
+            "description": "Order item not found"
+          },
+          "500": {
+            "description": "An error occurred while updating the order item"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an order item",
+        "tags": [
+          "OrderItems"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order item"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order item deleted successfully"
+          },
+          "400": {
+            "description": "Order not in a valid state for deletion"
+          },
+          "403": {
+            "description": "Unauthorized to delete this order item"
+          },
+          "404": {
+            "description": "Order item not found"
+          },
+          "500": {
+            "description": "An error occurred while deleting the order item"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "summary": "Create a new order",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "productID": {
+                          "type": "string",
+                          "description": "The ID of the product"
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "description": "The quantity of the product",
+                          "minimum": 1
+                        }
+                      },
+                      "required": [
+                        "productID",
+                        "quantity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or no items in the order"
+          },
+          "500": {
+            "description": "An error occurred while creating the order"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all orders (Staff only)",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderProduct"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "An error occurred while fetching orders"
+          }
+        }
+      }
+    },
+    "/orders/my-orders": {
+      "get": {
+        "summary": "Get orders for the authenticated customer",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders for the authenticated customer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderProduct"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "An error occurred while fetching customer orders"
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "summary": "Get an order by ID",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "An error occurred while fetching the order"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update the status of an order",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Pending",
+                      "Confirmed",
+                      "Cancelled",
+                      "Completed"
+                    ],
+                    "description": "The new status of the order"
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status transition"
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "An error occurred while updating the order status"
+          }
+        }
+      }
+    },
+    "/orders/cart": {
+      "get": {
+        "summary": "Get the cart for the authenticated customer",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart details for the authenticated customer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart not found"
+          },
+          "500": {
+            "description": "An error occurred while fetching the cart"
+          }
+        }
+      }
+    },
+    "/orders/checkout": {
+      "post": {
+        "summary": "Checkout the cart for the authenticated customer",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order confirmed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart not found"
+          },
+          "500": {
+            "description": "An error occurred while confirming the order"
+          }
+        }
+      }
+    },
+    "/orders/{id}/cancel": {
+      "put": {
+        "summary": "Cancel an order",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProduct"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Only 'Pending' orders can be cancelled"
+          },
+          "403": {
+            "description": "Forbidden: You can only cancel your own order"
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "500": {
+            "description": "An error occurred while cancelling the order"
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "summary": "Create a new product",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "An error occurred while creating the product"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all products",
+        "tags": [
+          "Products"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while fetching products"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Get a product by ID",
+        "tags": [
+          "Products"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "An error occurred while fetching the product"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a product by ID",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "An error occurred while updating the product"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a product by ID",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "An error occurred while deleting the product"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all users",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while fetching users"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/staff": {
+      "get": {
+        "summary": "Get all staff members (Manager only)",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all staff members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new staff member (Manager only)",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Staff member created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/staff/{id}": {
+      "get": {
+        "summary": "Get a staff member by ID",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the staff member"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Staff member details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Staff member not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a staff member (Manager only)",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the staff member"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Staff member updated successfully"
+          },
+          "404": {
+            "description": "Staff member not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a staff member (Manager only)",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the staff member"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Staff member deleted successfully"
+          },
+          "404": {
+            "description": "Staff member not found"
+          }
+        }
+      }
+    },
+    "/staff/{id}/reset-password": {
+      "post": {
+        "summary": "Reset password for a staff member (Manager only)",
+        "tags": [
+          "Staff"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the staff member"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset successfully"
+          },
+          "404": {
+            "description": "Staff member not found"
+          }
+        }
+      }
+    },
+    "/managers/users": {
+      "get": {
+        "summary": "Get all users (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "An error occurred while fetching users"
+          }
+        }
+      }
+    },
+    "/managers/users/{id}": {
+      "get": {
+        "summary": "Get a user by ID (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user's role (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roleName": {
+                    "type": "string",
+                    "enum": [
+                      "Customer",
+                      "Staff",
+                      "Manager",
+                      "Consultant"
+                    ],
+                    "description": "The new role for the user"
+                  }
+                },
+                "required": [
+                  "roleName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User role updated successfully"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/managers/consultants/{id}/approve": {
+      "put": {
+        "summary": "Approve a consultant (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the consultant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consultant approved successfully"
+          },
+          "404": {
+            "description": "Consultant not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/managers/products": {
+      "get": {
+        "summary": "Get all products (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new product (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/managers/products/{id}": {
+      "get": {
+        "summary": "Get a product by ID (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a product (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a product (Manager only)",
+        "tags": [
+          "Managers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
