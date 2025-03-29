@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CustomerSidebar from "../../components/CustomerSidebar";
 import axios from "../../utils/axiosInstance";
-import CustomerSidebar from "../../components/CustomerSideBar";
 import { MdVerified, MdClose } from "react-icons/md";
 import {
     Fab,
@@ -16,6 +16,7 @@ import {
     Tooltip,
     Typography,
     Modal,
+    Box,
     Button,
     TextField,
     Select,
@@ -30,7 +31,6 @@ import { motion } from "framer-motion";
 import { FaTrash, FaComment } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 
 const ViewBookingHistory = () => {
     const [bookings, setBookings] = useState([]);
@@ -174,10 +174,10 @@ const ViewBookingHistory = () => {
         setSelectedConsultant(null);
     };
 
-    const handleFeedbackClick = (bookingId) => {
+    const handleFeedbackClick = (bookingRequestId) => {
         setFeedbackData((prev) => ({
             ...prev,
-            bookingId: bookingId,
+            bookingRequestId: bookingRequestId,
         }));
         setShowFeedbackModal(true);
     };
@@ -188,6 +188,13 @@ const ViewBookingHistory = () => {
             if (response.status === 201) {
                 toast.success("Feedback submitted successfully!");
                 setShowFeedbackModal(false);
+                setFeedbackData({
+                    consultantRating: 0,
+                    consultantComment: "",
+                    serviceRating: 0,
+                    serviceComment: "",
+                    bookingId: null,
+                }); // Reset feedback form fields
                 setRefresh((prev) => !prev);
             }
         } catch (error) {
@@ -297,13 +304,13 @@ const ViewBookingHistory = () => {
                                 Chờ xác nhận
                             </MenuItem>
                             <MenuItem value="Confirmed" sx={{ color: "#3139f1" }}>
-                                Đã xác nhận
+                                Xác nhận
                             </MenuItem>
                             <MenuItem value="Completed" sx={{ color: "#31f131" }}>
-                                Đã hoàn thành
+                                Hoàn tất
                             </MenuItem>
                             <MenuItem value="Cancelled" sx={{ color: "#E27585" }}>
-                                Đã hủy
+                                Hủy
                             </MenuItem>
                         </Select>
                     </FormControl>
@@ -318,7 +325,7 @@ const ViewBookingHistory = () => {
                     </Typography>
                 ) : filteredBookings.length === 0 ? (
                     <Typography className="text-center">
-                        Không tìm thấy kết quả phù hợp.
+                        No booking history found.
                     </Typography>
                 ) : (
                     <>
@@ -326,13 +333,13 @@ const ViewBookingHistory = () => {
                             <Table>
                                 <TableHead className="bg-[#A7DFEC] text-white">
                                     <TableRow>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Dịch vụ</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Ngày</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Giờ</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Chuyên viên</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Trạng thái</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Hủy đặt</TableCell>
-                                        <TableCell align="center" style={{ fontWeight: 'bold', fontSize: '1.1rem', color:'#444444' }}>Đánh giá</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Dịch vụ</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Ngày</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Giờ</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Chuyên viên</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Trạng thái</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Hành động</TableCell>
+                                        <TableCell align="center" style={{ width: '14.28%', fontWeight: 'bold', fontSize: '1.1rem', color: '#444444' }}>Đánh giá</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -366,12 +373,12 @@ const ViewBookingHistory = () => {
                                             <TableCell align="center">
                                                 <span
                                                     className={`p-1 rounded ${booking.status === "Pending"
-                                                        ? "bg-yellow-200 text-yellow-800"
+                                                        ? "text-yellow-500"
                                                         : booking.status === "Confirmed"
-                                                            ? "bg-blue-200 text-blue-800"
+                                                            ? "text-blue-500"
                                                             : booking.status === "Completed"
-                                                                ? "bg-green-200 text-green-800"
-                                                                : "bg-red-200 text-red-800"
+                                                                ? "text-green-500"
+                                                                : "text-red-500"
                                                         }`}
                                                 >
                                                     {booking.status}
@@ -386,12 +393,6 @@ const ViewBookingHistory = () => {
                                                         setSelectedBookingId(booking._id);
                                                         setShowModal(true);
                                                     }}
-                                                    sx={{
-                                                        backgroundColor: '#f44336',
-                                                        '&:hover': {
-                                                            backgroundColor: '#d32f2f',
-                                                        },
-                                                    }}
                                                 >
                                                     <FaTrash />
                                                 </Button>
@@ -402,12 +403,6 @@ const ViewBookingHistory = () => {
                                                     color="primary"
                                                     size="small"
                                                     onClick={() => handleFeedbackClick(booking._id)}
-                                                    sx={{
-                                                        backgroundColor: '#1976d2',
-                                                        '&:hover': {
-                                                            backgroundColor: '#1565c0',
-                                                        },
-                                                    }}
                                                 >
                                                     <FaComment />
                                                 </Button>
@@ -450,7 +445,7 @@ const ViewBookingHistory = () => {
                         </Typography>
 
                         {selectedConsultant && (
-                            <div className="space-y-3 text-gray-700">
+                            <div className="space-y-3 text-gray-500">
                                 <Typography>
                                     <strong>First Name:</strong> {selectedConsultant.firstName}
                                 </Typography>
@@ -489,14 +484,8 @@ const ViewBookingHistory = () => {
                                 color="primary"
                                 className="rounded-full px-6 shadow-md"
                                 onClick={closeConsultantModal}
-                                sx={{
-                                    backgroundColor: '#1976d2',
-                                    '&:hover': {
-                                        backgroundColor: '#1565c0',
-                                    },
-                                }}
                             >
-                                Close
+                                Đóng
                             </Button>
                         </div>
                     </motion.div>
@@ -511,10 +500,9 @@ const ViewBookingHistory = () => {
                         right: 20,
                         backgroundColor: "#2B6A7C",
                         "&:hover": { backgroundColor: "#A7DFEC" },
-                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
                     }}
                 >
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#a2B6A7C92a4e] opacity-75"></span>
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#A7DFEC] opacity-75"></span>
                     <HomeIcon />
                 </Fab>
             </div>
@@ -523,23 +511,23 @@ const ViewBookingHistory = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
                         <h3 className="text-xl font-bold text-gray-800 mb-4">
-                            Hủy Đặt Lịch
+                            Xác nhận hủy đặt lịch
                         </h3>
                         <p className="text-gray-600">
-                            Bạn có chắc chắn muốn hủy đặt lịch này không? Hành động này không thể hoàn tác.
+                            Bạn có chắc chắn muốn hủy đặt lịch này không?
                         </p>
                         <div className="flex justify-center gap-4 mt-4">
                             <button
                                 className="py-2 px-6 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
                                 onClick={() => setShowModal(false)}
                             >
-                                Không hủy.
+                                Hủy
                             </button>
                             <button
-                                className="py-2 px-6 bg-[#f1baba] text-white rounded-lg hover:bg-[#e78999] transition"
+                                className="py-2 px-6 bg-[#A7DFEC] text-white rounded-lg hover:bg-[#2B6A7C] transition"
                                 onClick={() => handleCancelBooking(selectedBookingId)}
                             >
-                                Có hủy.
+                                Có
                             </button>
                         </div>
                     </div>
@@ -553,10 +541,10 @@ const ViewBookingHistory = () => {
                 >
                     <div className="fixed inset-0 flex items-center justify-center">
                         <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full">
-                            <h3 className="text-xl font-bold mb-4">Hãy để lại ý kiến cho chúng tôi</h3>
+                            <h3 className="text-xl font-bold mb-4">Đánh giá ở đây</h3>
 
                             <div className="mb-4">
-                                <Typography component="legend">Đánh giá chuyên gia</Typography>
+                                <Typography component="legend">Đánh giá chuyên viên</Typography>
                                 <Rating
                                     value={feedbackData.consultantRating}
                                     onChange={(_, value) =>
@@ -570,7 +558,7 @@ const ViewBookingHistory = () => {
                                     fullWidth
                                     multiline
                                     rows={2}
-                                    label="Đánh giá chuyên gia"
+                                    label="Đánh giá chuyên viên"
                                     value={feedbackData.consultantComment}
                                     onChange={(e) =>
                                         setFeedbackData((prev) => ({
@@ -579,28 +567,6 @@ const ViewBookingHistory = () => {
                                         }))
                                     }
                                     className="mt-2"
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                borderColor: 'gray',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: '#2B6A7C',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: '#2B6A7C',
-                                            },
-                                        },
-                                        '& .MuiInputBase-input': {
-                                            color: '#000000',
-                                        },
-                                        '& .MuiInputLabel-root': {
-                                            color: 'gray',
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': {
-                                            color: '#2B6A7C',
-                                        },
-                                    }}
                                 />
                             </div>
 
@@ -628,28 +594,6 @@ const ViewBookingHistory = () => {
                                         }))
                                     }
                                     className="mt-2"
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                borderColor: 'gray',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: '#2B6A7C',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: '#2B6A7C',
-                                            },
-                                        },
-                                        '& .MuiInputBase-input': {
-                                            color: '#000000',
-                                        },
-                                        '& .MuiInputLabel-root': {
-                                            color: 'gray',
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': {
-                                            color: '#2B6A7C',
-                                        },
-                                    }}
                                 />
                             </div>
 
@@ -657,12 +601,7 @@ const ViewBookingHistory = () => {
                                 <Button onClick={() => setShowFeedbackModal(false)}>
                                     Hủy
                                 </Button>
-                                <Button variant="contained" onClick={handleSubmitFeedback} sx={{
-                                    backgroundColor: '#1976d2',
-                                    '&:hover': {
-                                        backgroundColor: '#1565c0',
-                                    },
-                                }}>
+                                <Button variant="contained" onClick={handleSubmitFeedback}>
                                     Gửi đánh giá
                                 </Button>
                             </div>

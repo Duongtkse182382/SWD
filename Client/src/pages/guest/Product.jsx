@@ -180,7 +180,7 @@ export default function Product() {
       <div
         className="h-[500px] w-full flex items-center justify-center text-white text-center"
         style={{
-          backgroundImage: "url('/images/service.png')",
+          backgroundImage: "url('/images/product.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -329,7 +329,7 @@ export default function Product() {
         </div>
       )}
 
-      {cart.length > 0 && (
+      {/* {cart.length > 0 && (
         <div className="text-center mt-8">
           <button
             onClick={handleCheckout}
@@ -338,7 +338,7 @@ export default function Product() {
             Thanh toán
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Zoomed Image Modal */}
       {zoomedImage && (

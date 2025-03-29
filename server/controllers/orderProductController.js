@@ -116,15 +116,20 @@ exports.getCustomerOrders = async (req, res) => {
 
     const results = await Promise.all(orders.map(async (order) => {
       const items = await OrderItem.find({ orderID: order._id })
-        .populate("productID", "productName price");
-      return { ...order.toObject(), items };
+        .populate({
+          path: "productID", // Ensure productID is populated
+          select: "productName", // Only select productName
+        });
+      return { ...order.toObject(), productItems: items }; // Rename items to productItems for consistency
     }));
 
     res.json({ orders: results });
   } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 
 // 🔹 Hủy đơn hàng

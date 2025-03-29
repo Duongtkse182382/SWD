@@ -94,8 +94,8 @@ const Navbar = ({ cart, setCart }) => {
 
     return (
         <div className="w-full h-[80px] bg-[#E5F5F1] flex items-center justify-between px-6 md:px-12 lg:px-10 shadow-md relative z-10">
-            <NavLink to="/" className="w-[150px] h-[50px]">
-                <div className="w-full h-full bg-[url(/images/logo.png)] bg-cover bg-no-repeat"></div>
+            <NavLink to="/" className="w-[200px] h-[70px] flex items-center">
+                <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </NavLink>
 
             <button

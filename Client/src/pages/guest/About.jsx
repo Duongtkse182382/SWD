@@ -2,9 +2,11 @@ import Navbar from "../../components/Navbar";
 import { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import axios from "../../utils/axiosInstance";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 export default function About() {
+    const navigate = useNavigate(); // Khai báo navigate
 
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
@@ -19,6 +21,9 @@ export default function About() {
     const [consultants, setConsultants] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
     const [expandedConsultant, setExpandedConsultant] = useState(null); // State for expanded consultant
+    const [expandedServices, setExpandedServices] = useState(null); // State for expanded consultant
+    const [services, setServices] = useState([]); // State for services
+
 
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
@@ -152,6 +157,9 @@ export default function About() {
     const toggleConsultantNote = (consultantId) => {
         setExpandedConsultant(expandedConsultant === consultantId ? null : consultantId);
     };
+    const toggleServiceNote = (ServiceId) => {
+        setExpandedServices(expandedServices === ServiceId ? null : ServiceId);
+    };
 
     const handleConsultantImageClick = (imgURL) => {
         setZoomedImage(imgURL);
@@ -183,30 +191,35 @@ export default function About() {
             }
         };
 
-        fetchConsultants();
-    }, []);
-
-    useEffect(() => {
         const fetchFeedbacks = async () => {
             try {
-                const res = await axios.get("/api/feedbacks");
+                const res = await axios.get("/api/feedbacks/consultant-rating");
                 setFeedbacks(res.data);
             } catch (err) {
                 console.error("Failed to fetch feedbacks:", err);
             }
         };
 
+        fetchConsultants();
         fetchFeedbacks();
     }, []);
 
-    const getFeedbackForConsultant = (consultantId) => {
-        return feedbacks.filter(feedback => feedback.consultantId === consultantId);
-    };
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get("/api/services");
+                setServices(response.data);
+            } catch (err) {
+                console.error("Failed to fetch services:", err);
+            }
+        };
+
+        fetchServices();
+    }, []);
 
     const getAverageRating = (consultantId) => {
-        const feedbacksForConsultant = getFeedbackForConsultant(consultantId);
-        const totalRating = feedbacksForConsultant.reduce((sum, feedback) => sum + feedback.consultantRating, 0);
-        return (totalRating / feedbacksForConsultant.length).toFixed(1);
+        const feedback = feedbacks.find(feedback => feedback._id === consultantId);
+        return feedback ? feedback.averageRating.toFixed(1) : "0.0";
     };
 
     if (loading) {
@@ -226,7 +239,7 @@ export default function About() {
             <div
                 className="h-[500px] w-full flex items-center justify-center text-white text-center"
                 style={{
-                    backgroundImage: "url('/images/home.png')",
+                    backgroundImage: "url('/images/aboutus.png')",
                     backgroundSize: "cover",  // Giúp ảnh bao phủ toàn bộ phần hero
                     backgroundPosition: "center",  // Căn giữa ảnh
                     backgroundRepeat: "no-repeat", // Không lặp lại ảnh
@@ -240,27 +253,42 @@ export default function About() {
 
             {/* Body Section */}
             <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
-                <div className="max-w-4xl mx-auto px-4 py-16 text-gray-800"> {/* Adjusted margins */}
+                <div className="max-w-4xl mx-auto px-4 py-16 text-gray-800">
                     <h2 className="text-3xl font-bold text-center mb-6">
-                        <span className="text-[#075E76]">LÀN DA KHỎE ĐẸP</span> TỪ THIÊN NHIÊN - AN TOÀN VÀ HIỆU QUẢ!
+                        <span className="text-[#075E76] relative inline-block">
+                            SRITINY - CHUYÊN GIA CHĂM SÓC DA
+                            <span className="absolute w-full h-[3px] bg-[#075E76] bottom-0 left-0 transform scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
+                        </span>
                     </h2>
                     <p className="text-lg text-center leading-relaxed">
-                        Từ năm 1973, Revivalabs đã theo đuổi một sứ mệnh duy nhất: tạo ra những sản phẩm chăm sóc da an toàn, hiệu quả và mang lại kết quả rõ rệt với mức giá hợp lý.
-                        Chúng tôi tự hào khi biết rằng sản phẩm của mình được tin dùng qua nhiều thế hệ – từ bà, mẹ đến con gái.
+                        Sritiny tự hào là đơn vị hàng đầu trong lĩnh vực chăm sóc da, mang đến những giải pháp hiệu quả giúp bạn sở hữu làn da khỏe đẹp, rạng rỡ.
+                        Chúng tôi không chỉ cung cấp các sản phẩm chăm sóc da chất lượng cao mà còn có đội ngũ chuyên viên giàu kinh nghiệm, sẵn sàng tư vấn và đồng hành cùng bạn.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-                        <img src="client/public/images/about_2.png" alt="Lịch sử thương hiệu" className="rounded-lg shadow-lg" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 items-center">
+                        <div className="size-full relative group flex justify-center items-center">
+                            <img
+                                src='/images/about.png'
+                                alt="Dịch vụ chăm sóc da"
+                                className="rounded-lg shadow-md transform transition-transform duration-300 group-hover:scale-105 max-h-[400px] object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
                         <div>
                             <p className="text-lg leading-relaxed">
-                                Hành trình của Revivalabs là một câu chuyện về sự đổi mới, niềm tin và sự bền vững. Từ những ngày đầu tiên, chúng tôi đã theo đuổi 100% nguyên liệu thiên nhiên, trước khi xu hướng này trở thành phổ biến trên toàn cầu.
+                                Đội ngũ chuyên viên của Sritiny được đào tạo bài bản, luôn cập nhật những công nghệ và phương pháp chăm sóc da tiên tiến nhất.
+                                Chúng tôi tin rằng làn da đẹp không chỉ đến từ bên ngoài mà còn từ sự chăm sóc chuyên sâu và phù hợp.
                             </p>
                             <p className="mt-4 text-lg leading-relaxed">
-                                Ngày nay, chúng tôi tiếp tục phát triển những sản phẩm chăm sóc da tự nhiên giúp bạn có làn da rạng rỡ và khỏe mạnh hơn mỗi ngày. Hãy cùng chúng tôi viết tiếp câu chuyện này!
+                                Ngoài các liệu trình spa chuyên nghiệp, chúng tôi còn cung cấp những sản phẩm dưỡng da an toàn, được kiểm chứng về chất lượng, giúp bạn duy trì vẻ đẹp lâu dài ngay tại nhà.
                             </p>
                         </div>
                     </div>
+                    <p className="text-center text-balance mt-8 text-xl leading-relaxed font-semibold">
+                        Hãy để Sritiny đồng hành cùng bạn trên hành trình chăm sóc làn da – nơi vẻ đẹp và sự tự tin luôn tỏa sáng!
+                    </p>
                 </div>
+
 
                 <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
@@ -325,10 +353,76 @@ export default function About() {
                             </div>
                         ))}
                     </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/sản phẩm")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem tất cả sản phẩm
+                        </button>
+                    </div>
+                </div>
+
+                {/* Services Section */}
+                <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
+                    <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
+                        Những dịch vụ của chúng tôi:
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {services.slice(0, 4).map((service) => ( // Giới hạn hiển thị 4 dịch vụ
+                            <div
+                                key={service._id}
+                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+                            >
+                                {/* Service Image */}
+                                <div className="w-full h-48 overflow-hidden cursor-pointer" onClick={() => navigate(`/dịch vụ/${service._id}`)}>
+                                    <img
+                                        src={service.image || "/images/default-service.png"}
+                                        alt={service.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+
+                                {/* Service Details */}
+                                <div className="px-6 pt-6 pb-6 flex-grow flex flex-col">
+                                    <h3 className="text-xl font-bold mb-2">{service.name}</h3>
+                                    <p className="text-gray-600 mb-4 flex-grow">
+                                        {expandedServices === service._id
+                                            ? service.description
+                                            : `${service.description.substring(0, 200)}...`}
+                                        {service.description.length > 200 && (
+                                            <button
+                                                onClick={() =>
+                                                    setExpandedServices(
+                                                        expandedServices === service._id ? null : service._id
+                                                    )
+                                                }
+                                                className="text-blue-500 ml-2"
+                                            >
+                                                {expandedServices === service._id ? "Thu gọn" : "Xem thêm"}
+                                            </button>
+                                        )}
+                                    </p>
+                                    <div className="text-gray-600 mt-2">
+                                        <h3 className="text-lg font-bold">Giá:</h3>
+                                        <p className="text-[#2B6A7C] font-semibold">{service.price.toLocaleString('vi-VN')} VND</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/dịch vụ")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem tất cả dịch vụ
+                        </button>
+                    </div>
                 </div>
 
                 {/* Consultants Section */}
-                <div className="max-w-7xl mx-auto px-6 py-16 text-[#2B6A7C]">
+                <div className="max-w-7xl mx-auto pb py-16 text-[#2B6A7C]">
                     <div className="flex-shrink-0 text-[40px] mb-10 font-semibold leading-[48px] tracking-[-0.8px] text-center px-[80px] text-[#2B6A7C] pacifico-regular">
                         Những chuyên viên của chúng tôi:
                     </div>
@@ -336,7 +430,7 @@ export default function About() {
                         {consultants.map((consultant) => (
                             <div
                                 key={consultant._id}
-                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between h-full"
                             >
                                 {/* Consultant Image */}
                                 <div className="w-full h-48 overflow-hidden cursor-pointer" onClick={() => handleConsultantImageClick(consultant.image || "/images/default-consultant.png")}>
@@ -348,11 +442,11 @@ export default function About() {
                                 </div>
 
                                 {/* Consultant Details */}
-                                <div className="px-6 pt-6 flex-grow">
+                                <div className="px-6 pt-6 pb-6 flex-grow flex flex-col">
                                     <h3 className="text-xl font-bold mb-2">
                                         {consultant.firstName} {consultant.lastName}
                                     </h3>
-                                    <p className="text-gray-600 mb-2">
+                                    <p className="text-gray-600 mb-4 flex-grow">
                                         {expandedConsultant === consultant._id ? consultant.note : `${consultant.note.substring(0, 100)}...`}
                                         {consultant.note.length > 100 && (
                                             <button onClick={() => toggleConsultantNote(consultant._id)} className="text-blue-500 ml-2">
@@ -362,18 +456,32 @@ export default function About() {
                                     </p>
                                     <div className="text-gray-600 mt-2">
                                         <h3 className="text-lg mt-5 mb-1 font-bold">Đánh giá của khách hàng</h3>
-                                        {getFeedbackForConsultant(consultant._id).length === 0 ? (
-                                            <h3><strong>Điểm trung bình: </strong>Không có điểm đánh giá nào về chuyên viên này.</h3>
-                                        ) : (
-                                            <div className="mt-4">
-                                                <h3 className="text-base font-semibold">Điểm trung bình:</h3>
-                                                <p><strong>{getAverageRating(consultant._id)}⭐</strong></p>
+                                        <div className="flex items-center mt-4">
+                                            <div className="flex text-yellow-500 text-2xl mr-2">
+                                                {Array.from({ length: 5 }, (_, i) => {
+                                                    const starValue = i + 1;
+                                                    if (getAverageRating(consultant._id) >= starValue) {
+                                                        return <FaStar key={i} />;
+                                                    } else if (getAverageRating(consultant._id) >= starValue - 0.5) {
+                                                        return <FaStarHalfAlt key={i} />;
+                                                    } else {
+                                                        return <FaRegStar key={i} />;
+                                                    }
+                                                })}
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
+                    </div>
+                    <div className="flex justify-center mt-8">
+                        <button
+                            onClick={() => navigate("/chuyên viên tư vấn")}
+                            className="px-6 py-2 bg-[#A7DFEC] text-[#2B6A7C] rounded-full hover:bg-[#2B6A7C] hover:text-white transition duration-300"
+                        >
+                            Xem thêm chuyên viên
+                        </button>
                     </div>
                 </div>
             </div>
@@ -426,7 +534,7 @@ export default function About() {
                 </div>
             )}
 
-            {cart.length > 0 && (
+            {/* {cart.length > 0 && (
                 <div className="text-center mt-8">
                     <button
                         onClick={handleCheckout}
@@ -435,7 +543,7 @@ export default function About() {
                         Thanh toán
                     </button>
                 </div>
-            )}
+            )} */}
 
             {/* Zoomed Image Modal */}
             {zoomedImage && (

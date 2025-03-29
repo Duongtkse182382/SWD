@@ -22,7 +22,7 @@ const CustomerSidebar = () => {
         localStorage.removeItem("roleName");
         sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("roleName");
-        navigate("/login");
+        navigate("/dang-nhap");
       })
       .catch(error => {
         console.error("Đăng xuất thất bại:", error.response?.data?.message || error.message);

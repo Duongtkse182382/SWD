@@ -28,7 +28,7 @@ const ViewBooked = () => {
                 return { ...booking, feedback: "Chưa có đánh giá ", rating: "N/A" };
               }
             }
-            return { ...booking, feedback: "No feedback yet", rating: "N/A" };
+            return { ...booking, feedback: "Chưa có đánh giá", rating: "N/A" };
           })
         );
 
@@ -81,7 +81,7 @@ const ViewBooked = () => {
     }));
   };
 
-  if (loading) return <p className="text-center mt-5">Loading...</p>;
+  if (loading) return <p className="text-center mt-5">Đang tải...</p>;
 
   const uniqueWeeks = [...new Set(bookings.map((booking) => getWeekRange(new Date(booking.date))))];
 
@@ -101,7 +101,7 @@ const ViewBooked = () => {
           </select>
         </div>
         {filteredBookings.length === 0 ? (
-          <p>No bookings assigned to you yet.</p>
+          <p>Bạn chưa có lịch nào.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 shadow-md">
